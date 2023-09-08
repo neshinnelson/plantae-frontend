@@ -1,0 +1,38 @@
+/* .category-page{
+    margin: 2rem;
+} */
+.category-img{
+    width: 100vw;
+    height: 15rem;
+    background-image: url('https://images.pexels.com/photos/2101187/pexels-photo-2101187.jpeg?auto=compress&cs=tinysrgb&w=600');
+    background-repeat: no-repeat;
+    background-size: cover; 
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+}
+.display-container{
+    /* background-color: aqua; */
+    padding: 1rem 2rem;
+    display: grid;
+    grid-template-columns: repeat(4, 20rem);
+    gap: 1rem;
+}
+
+/* //display container styles */
+.item-container{
+    width: 20rem;
+    padding: 1rem;
+    border: 2px solid #292929;
+    border-radius: 10px;
+    /* margin: 0 1rem; */
+    /* background-color: rgb(209, 106, 106); */
+}
+.item-container img {
+    width: 18rem;
+    height: 18rem;
+
+}
+li{
+    list-style: none;
+}

@@ -1,0 +1,14 @@
+.nav-bar{
+    background-color: #292929;
+    color: blanchedalmond;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.right-end{
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    
+}

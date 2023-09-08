@@ -1,0 +1,10 @@
+.menu-animatyion-home-page{
+    height: 30rem;
+    margin: 2rem 0;
+    border-radius: 10px;
+    background-color: #292929;
+    color: antiquewhite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
