@@ -10,8 +10,10 @@ list-style: none;
     align-items: center;
     justify-content: space-between;
     /* background-color: blueviolet; */
+    
 }
 li{
     align-self: center;
     justify-self: center;
+    cursor:pointer;
 }

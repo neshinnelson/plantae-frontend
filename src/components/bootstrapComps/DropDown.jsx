@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown';
+import { useNavigate } from 'react-router-dom';
+import { Mycontext } from '../../App';
 
 
 export default function DropDown({name}) {
+  const GetContext = useContext(Mycontext)
+  const nav = useNavigate()
   return (
     <div>
          <Dropdown>
@@ -11,9 +15,13 @@ export default function DropDown({name}) {
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-                <Dropdown.Item href="#/action-1">logout</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">my cart</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">my wishlist</Dropdown.Item>
+                <Dropdown.Item onClick={()=>{
+                  GetContext.setIsLogedIn(false)
+                  sessionStorage.clear()
+                  window.location.reload()
+                }}>logout</Dropdown.Item>
+                <Dropdown.Item onClick={()=>nav('/cart')}>my cart</Dropdown.Item>
+                <Dropdown.Item onClick={()=>nav('/wishlist')}>my wishlist</Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
     </div>

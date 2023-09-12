@@ -12,3 +12,6 @@
     list-style: none;
     
 }
+.nav-bar h2 li{
+    cursor:pointer;
+}

@@ -1,0 +1,31 @@
+.login-page>div{
+    background-color: #212121;
+    color: blanchedalmond;
+    width: 30rem;
+    height: 20rem;
+    border-radius: 10px;
+    outline-offset: 5px;
+    outline: 2px solid #212121;
+    margin: 2rem auto;
+}
+.login-form{
+    width: 15rem;
+    height: 20rem;
+    padding: 3rem 2rem;
+    /* background-color:blue; */
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: space-between;
+    float: left;
+}
+
+.bg-img{
+    /* background-image: linear-gradient(to bottom right, #ffebcd,black); */
+    background-image:url(../images/pexels-louis-2101187.jpg) ;
+    background-size: cover;
+    width: 15rem;
+    height: 20rem;
+    border-radius: 0 10px 10px 0;
+    display: inline-block;
+}

@@ -1,7 +1,10 @@
 import axios from 'axios'
 import React, { useState } from 'react'
+import '../styles/signup-page.css'
+import { useNavigate } from 'react-router-dom'
 
 export default function Signup() {
+    const nav = useNavigate()
     const[userData,setUserData]= useState({
         firstName:'',
         secondName:'',
@@ -10,11 +13,11 @@ export default function Signup() {
         password:'',
         phone:''
     })
-    console.log(userData.userName);
+    // console.log(userData.userName);
 
     const registerUser = async(e)=>{
         e.preventDefault()
-        console.log(userData);
+        // console.log(userData);
         try{
             const response = await axios.post('http://localhost:4000/user-data',{
                 firstName:userData.firstName,
@@ -25,8 +28,9 @@ export default function Signup() {
                 phone:parseFloat(Number(userData.phone))
             })
             const data = response.data
-            console.log(data);
+            // console.log(data);
             data.response==='success'?alert('user registered'):alert('check the fields')
+            nav('/login')
         }
         catch(err){
             console.error(err);
@@ -35,8 +39,9 @@ export default function Signup() {
     }
   return (
     <div className='signup-page'>
+        <h2>Signup</h2>
         <div>
-            <form onSubmit={registerUser}>
+            <form onSubmit={registerUser} className='signup-form'>
                 <label htmlFor="first-name">First Name</label>
                 <input type="text" onChange={(e)=>setUserData({...userData,firstName:e.target.value})}/>
 
@@ -57,6 +62,8 @@ export default function Signup() {
 
                 <input type="submit" value='submit' className='btn-sty-1'/>
             </form>
+
+            <div className="bg-img-sigup-page"></div>
         </div>
     </div>
   )

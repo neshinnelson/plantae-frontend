@@ -1,18 +1,19 @@
 import React from 'react'
 import '../styles/category-bar.css'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function CategoryBar() {
+  const nav = useNavigate()
   return (
     <div className='category-bar'>
         <ul>
-            <Link to={'/category/flowering-plants'}><li>Flowering Plants</li></Link>
-            <Link to={'/category/indoor-plants'}><li>Indoor Plants</li></Link>
-            <Link to={'/category/bonsai-plants'}><li>Bonsai Plants</li></Link>
-            <Link to={'/category/cactus-and-succulents'}><li>Cactus and Succulents</li></Link>
-            <Link to={'/category/fruits-plants'}><li>Fruit Plants</li></Link>
-            <Link to={'/category/palm-plants'}><li>Palm Plants</li></Link>
-            <Link to={'/category/kokedama-plants'}><li>Kokedama Plants</li></Link>
+          <li onClick={()=>nav('/category/flowering-plants')}>Flowering Plants</li>
+          <li onClick={()=>nav('/category/indoor-plants')}>Indoor Plants</li>
+          <li onClick={()=>nav('/category/bonsai-plants')}>Bonsai Plants</li>
+          <li onClick={()=>nav('/category/cactus-and-succulents')}>Cactus and Succulents</li>
+          <li onClick={()=>nav('/category/fruits-plants')}>Fruit Plants</li>
+          <li onClick={()=>nav('/category/palm-plants')}>Palm Plants</li>
+          <li onClick={()=>nav('/category/kokedama-plants')}>Kokedama Plants</li>
         </ul>
     </div>
   )

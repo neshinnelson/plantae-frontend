@@ -6,6 +6,7 @@
 
 body{
   background-color: blanchedalmond;
+  text-align: center;
 }
 .btn-sty-1{
   background-color: #975d11;
@@ -15,6 +16,12 @@ body{
   width: 5rem;
   height: 2rem;
   margin-right: .5rem;
+  transition: background-color 100ms;
+  transition-timing-function: ease
+}
+.btn-sty-1:active{
+  background-color: #b8823b;
+  border: 1px solid #975d11;
 }
 .btn-sty-2{
   border: 2px solid #975d11;
@@ -23,4 +30,8 @@ body{
   width: 5rem;
   height: 2rem;
   margin-right: .5rem;
+}
+.btn-sty-2:active{
+  background-color: #b8823b;
+  border: 1px solid #975d11;
 }

@@ -11,6 +11,9 @@
     align-items: center;
     font-size: 1rem;
 }
+.category-details{
+    margin: 1rem 2rem
+}
 .display-container{
     /* background-color: aqua; */
     padding: 1rem 2rem;
