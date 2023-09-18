@@ -32,9 +32,9 @@ const reducerCart = async (state,action)=>{
           quantity:quantity,
           potColor:action.potColor,
         });
-        const data = res.data
+        const data =res.data 
         console.log(data);
-        return [...state,data.data]
+        console.log('item added to cart');
       }
       catch(err){
         console.error('unable to fetch data now',err);
@@ -76,6 +76,7 @@ function App() {
   const [isLogedIn, setIsLogedIn] = useState(false)
   const [currentUser, setCurrentUser] = useState('')
   const[cart,setCart]=useState([])
+  const [trigger,setTrigger]=useState(0)
   const url = process.env.REACT_APP_URL
   // console.log(newCart);
 
@@ -93,7 +94,7 @@ function App() {
       }
     }
     fetchingCartFromDb()
-  },[newCart])
+  },[newCart,trigger])
 
   console.log(newCart);
   console.log(cart);
@@ -101,7 +102,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Mycontext.Provider value={{newCart,dispatchCart,wishList,dispatchWishList,
-          setCurrentUser,setIsLogedIn,isLogedIn,currentUser,cart}}>
+          setCurrentUser,setIsLogedIn,isLogedIn,currentUser,cart,setTrigger}}>
           <NavBars/>
           <CategoryBar/>
           <Routes>

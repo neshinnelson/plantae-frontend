@@ -11,58 +11,15 @@ export default function CategoryPage() {
     const nav = useNavigate()
 
     const baseUrl = process.env.REACT_APP_URL;
-    // console.log(url);
+    console.log(baseUrl);
     const[description,setDescription]=useState('')
     const[category,setCategory]=useState('')
     const [plants, setPlants] = useState([])
-    let url
-    let url2
+    const urlEndPoint = name.split('-').join('%20')
+    console.log(urlEndPoint);
+    let url =  baseUrl+'category?category='+urlEndPoint
+    let url2 = baseUrl+'plants/filter?category='+urlEndPoint
 
-    switch(name){
-        case 'flowering-plants':
-            console.log('hai');
-            url = baseUrl+'category?category=flowering%20plants'
-            url2 = baseUrl+'plants/filter?category=flowering%20plants'
-            // setCategory('Flowering Plants')
-            break;
-        case 'indoor-plants':
-          console.log('hai');
-          url = baseUrl+'category?category=indoor%20plants'
-          url2 = baseUrl+'plants/filter?category=indoor%20plants'
-          // setCategory('Indoor Plants')
-          break;    
-        case 'bonsai-plants':
-          console.log('hai');
-          url = baseUrl+'category?category=bonsai%20plants'
-          url2 = baseUrl+'plants/filter?category=bonsai%20plants'
-          // setCategory('Bonsai Plants')
-          break;
-        case 'cactus-and-succulents':
-          console.log('hai');
-          url = baseUrl+'category?category=cactus%20and%20succulents'
-          url2 = baseUrl+'plants/filter?category=cactus%20and%20succulents'
-          // setCategory('Cactus and succulents')
-          break;
-        case 'fruits-plants':
-          console.log('hai');
-          url = baseUrl+'category?category=fruits%20plants'
-          url2 = baseUrl+'plants/filter?category=fruits%20plants'
-          // setCategory('Fruits Plants')
-          break;
-        case 'palm-plants':
-          console.log('hai');
-          url = baseUrl+'category?category=palm%20plants'
-          url2 = baseUrl+'plants/filter?category=palm%20plants'
-          // setCategory('Palm Plants')
-          break;
-        case 'kokedama-plants':
-          console.log('hai');
-          url = baseUrl+'category?category=kokedama%20plants'
-          url2 = baseUrl+'plants/filter?category=kokedama%20plants'
-          // setCategory('Kokedama Plants')
-          break;
-
-    }
     useEffect(()=>{
       let categoryDetails = async ()=>{
         try{
@@ -101,6 +58,7 @@ export default function CategoryPage() {
                       category:category,
                       potColor:potColor}
       GetContext.dispatchCart(action)
+      GetContext.setTrigger(Math.random())
       nav('/cart')
     }
   
