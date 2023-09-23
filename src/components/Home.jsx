@@ -19,9 +19,11 @@ export default function Home() {
   const [randomNum2, setRandomNum2] = useState()
   const [randomNum3, setRandomNum3] = useState()
   const [randomNum4, setRandomNum4] = useState()
-  // const randomNum = Math.floor(Math.random()*44)
-  
-  // console.log(randomNum);
+  const [randomNum5, setRandomNum5] = useState()
+  const [randomNum6, setRandomNum6] = useState()
+  const [randomNum7, setRandomNum7] = useState()
+  const [randomNum8, setRandomNum8] = useState()
+  const baseUrl = process.env.REACT_APP_URL
 
   useEffect(()=>{
     const fetchAllPlants = async ()=>{
@@ -35,32 +37,74 @@ export default function Home() {
         setRandomNum2(Math.floor(Math.random()*data.length))
         setRandomNum3(Math.floor(Math.random()*data.length))
         setRandomNum4(Math.floor(Math.random()*data.length))
+        setRandomNum5(Math.floor(Math.random()*data.length))
+        setRandomNum6(Math.floor(Math.random()*data.length))
+        setRandomNum7(Math.floor(Math.random()*data.length))
+        setRandomNum8(Math.floor(Math.random()*data.length))
       }
       catch(err){
         console.error('unable to fetch data now',err);
       }
     }
     fetchAllPlants()
-    // const [randomNum, setRandomNum] = useState(Math.floor(Math.random()*allPlants.length))
   },[])
 
-  const addToCart = (img,name,rating,price,category)=>{
-    const action = {type:'add',
-                    // userName:GetContext.currentUser,
-                    img:img,
-                    name:name,
-                    rating:rating,
-                    price:price,
-                    category:category,}
-    GetContext.dispatchCart(action)
-    nav('/cart')
+  const addToCart = async(img,name,rating,price,category,potColor)=>{
+    if(sessionStorage.getItem("isLogedIn")==="true"){
+      try{
+        const res = await axios.post(baseUrl+'cart',{
+          userId:sessionStorage.getItem('userId'),
+          category:category,
+          name:name,
+          imgLinks:img,
+          price:price,
+          rating:rating,
+          quantity:1,
+          potColor:potColor,
+        })
+        const data = res.data
+        console.log(data)
+        GetContext.setTrigger(Math.random())
+        nav('/cart')
+      }
+      catch(err){
+        console.error('unable to post item to cart now', err);
+      }
+    }
+    else{
+      try{
+        const res = await axios.post(baseUrl+'temp-cart',{
+          category:category,
+          name:name,
+          imgLinks:img,
+          price:price,
+          rating,rating,
+          quantity:1,
+          potColor:potColor
+        })
+        const data = res.data
+        console.log(data)
+        console.log('item posted to temperary cart');
+        nav('/cart')
+      }
+      catch(err){
+        console.error('unable to post item to temperary cart now',err)
+      }
+    }
+    
   }
-  const arr = [allPlants[randomNum],allPlants[randomNum-6],
+  const arr = [allPlants[randomNum],allPlants[randomNum5],
                allPlants[randomNum2],allPlants[randomNum3],
-               allPlants[randomNum4],allPlants[randomNum-10],
-              allPlants[randomNum2-12],allPlants[randomNum2-8]]
+               allPlants[randomNum4],allPlants[randomNum7],
+              allPlants[randomNum6],allPlants[randomNum8]]
   // console.log(allPlants);
   // console.log(arr);
+
+  // redirecting to /single-plant-window
+  const handleClickToPalntWindow = async(plantName)=>{
+    alert(plantName)
+    nav(`/plant-window/${plantName}`)
+  }
   return (
     <div className='home-page'>
         <div className="about-site">
@@ -80,9 +124,8 @@ export default function Home() {
            price={item?.price}
            category={item?.category}
            btnFunc={
-             ()=>addToCart(item?.imgLinks[0],item?.name,
-               item?.rating,item?.price,item?.category
-               )}
+            ()=>addToCart(item.imgLinks[0],item.name,item.rating,item.price,item.category,item.potColor[0])}
+           redirectFunc ={()=>handleClickToPalntWindow(item.name)}
            />
            </div>
         ))

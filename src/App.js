@@ -13,66 +13,15 @@ import Login from './components/Login';
 import NotFoundPage from './components/NotFoundPage';
 import axios from 'axios';
 import Test from './components/Test';
+import SinglePlantPage from './components/SinglePlantPage';
+import SpecialOfferPage from './components/SpecialOfferPage';
 
 export const Mycontext = createContext()
 
-const reducerCart = async (state,action)=>{
-  // console.log(action);
-  const url = process.env.REACT_APP_URL
-  switch (action.type){
-    case 'add':
-      let quantity = 1
-      try{
-        const res = await axios.post(url+'cart',{
-          userId:sessionStorage.getItem('userId'),
-          category:action.category,
-          name:action.name,
-          imgLinks:action.img,
-          price:action.price,
-          quantity:quantity,
-          potColor:action.potColor,
-        });
-        const data =res.data 
-        console.log(data);
-        console.log('item added to cart');
-      }
-      catch(err){
-        console.error('unable to fetch data now',err);
-      }
-      break
-    case 'remove':
-      const itemName = action.name.split(' ').join('%20')
-      try{
-        const res = await axios.delete(url+'cart/'+itemName)
-        const data = res.data
-        console.log('item deleted from db',data);
-      }
-      catch(err){
-        console.error('unable to remove data from cart now',err);
-      }
-  }
-}
-const reducerWishList = (state,action)=>{
-  // console.log(action);
-  switch (action.type){
-    case 'add':
-      return [...state,{
-        // userName:action.userName,
-        img:action.img,
-        name:action.name,
-        rating:action.rating,
-        price:action.price,
-        category:action.category}]
-    case 'remove':
-      const updatedState = state.filter((item)=>item.name !== action.name)
-      return updatedState
-  }
-}
 
 function App() {
 
-  const[newCart,dispatchCart]= useReducer(reducerCart,[])
-  const[wishList,dispatchWishList]= useReducer(reducerWishList,[])
+
   const [isLogedIn, setIsLogedIn] = useState(false)
   const [currentUser, setCurrentUser] = useState('')
   const[cart,setCart]=useState([])
@@ -90,27 +39,29 @@ function App() {
       }
       catch(err){
         console.error('unable to fetch cart data now',err);
-        alert('user is not logedin')
+        // alert('user is not logedin')
+        console.log('user is not logedin');
       }
     }
     fetchingCartFromDb()
-  },[newCart,trigger])
+  },[trigger])
 
-  console.log(newCart);
   console.log(cart);
   return (
     <div className="App">
       <BrowserRouter>
-        <Mycontext.Provider value={{newCart,dispatchCart,wishList,dispatchWishList,
-          setCurrentUser,setIsLogedIn,isLogedIn,currentUser,cart,setTrigger}}>
+        <Mycontext.Provider value={{
+          setCurrentUser,setIsLogedIn,isLogedIn,currentUser,cart,setTrigger,trigger}}>
           <NavBars/>
           <CategoryBar/>
           <Routes>
             <Route path='/' element={<Home/>}/>
             <Route path='/category/:name' element={<CategoryPage/>}/>
+            <Route path='/plant-window/:name' element={<SinglePlantPage/>}/>
             <Route path='/cart' element={<Cart/>}/>
             <Route path='/signup' element={<Signup/>}/>
             <Route path='/login' element={<Login/>}/>
+            <Route path='/todays-offer' element={<SpecialOfferPage/>}/>
             <Route path='*' element={<NotFoundPage/>}/>
             <Route path='/test' element={<Test/>}/>
           </Routes>

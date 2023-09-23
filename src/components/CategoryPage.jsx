@@ -48,18 +48,49 @@ export default function CategoryPage() {
       
     },[name])
 
-    const addToCart = (img,name,rating,price,category,potColor)=>{
-      const action = {type:'add',
-                      // userName:GetContext.currentUser,
-                      img:img,
-                      name:name,
-                      rating:rating,
-                      price:price,
-                      category:category,
-                      potColor:potColor}
-      GetContext.dispatchCart(action)
-      GetContext.setTrigger(Math.random())
-      nav('/cart')
+    const addToCart = async(img,name,rating,price,category,potColor)=>{
+      if(sessionStorage.getItem("isLogedIn")==="true"){
+        try{
+          const res = await axios.post(baseUrl+'cart',{
+            userId:sessionStorage.getItem('userId'),
+            category:category,
+            name:name,
+            imgLinks:img,
+            price:price,
+            rating:rating,
+            quantity:1,
+            potColor:potColor,
+          })
+          const data = res.data
+          console.log(data)
+          GetContext.setTrigger(Math.random())
+          nav('/cart')
+        }
+        catch(err){
+          console.error('unable to post item to cart now', err);
+        }
+      }
+      else{
+        try{
+          const res = await axios.post(baseUrl+'temp-cart',{
+            category:category,
+            name:name,
+            imgLinks:img,
+            price:price,
+            rating,rating,
+            quantity:1,
+            potColor:potColor
+          })
+          const data = res.data
+          console.log(data)
+          console.log('item posted to temperary cart');
+          nav('/cart')
+        }
+        catch(err){
+          console.error('unable to post item to temperary cart now',err)
+        }
+      }
+      
     }
   
     const addToWishList = (img,name,rating,price,category)=>{
@@ -74,6 +105,11 @@ export default function CategoryPage() {
       GetContext.dispatchWishList(action)
     }
 
+  // redirecting to /single-plant-window
+  const handleClickToPalntWindow = async(plantName)=>{
+    alert(plantName)
+    nav(`/plant-window/${plantName}`)
+  }
 
   return (
     <div className='category-page'>
@@ -94,7 +130,8 @@ export default function CategoryPage() {
                                      rating={item?.rating}
                                      price={item?.price}
                                      category={item?.category}
-                                     btnFunc={()=>addToCart(item.imgLinks[0],item.name,item.rating,item.price,item.category,item.potColor[0])}/>
+                                     btnFunc={()=>addToCart(item.imgLinks[0],item.name,item.rating,item.price,item.category,item.potColor[0])}
+                                     redirectFunc ={()=>handleClickToPalntWindow(item.name)}/>
 
             </div>
           ))}
@@ -104,10 +141,10 @@ export default function CategoryPage() {
   )
 }
 
-export  const DisplayItemContainerComp = ({img,name,rating,price,btnFunc})=>{
+export  const DisplayItemContainerComp = ({img,name,rating,price,btnFunc,redirectFunc})=>{
           return(
             <div className="item-container">
-            <div className='img'>
+            <div className='img' onClick={redirectFunc}>
               <img src={img} alt="" />
               <h4>{name}</h4>
             </div>

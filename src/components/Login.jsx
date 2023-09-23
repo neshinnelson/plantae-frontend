@@ -2,11 +2,12 @@ import axios from 'axios'
 import React, { useContext, useState } from 'react'
 import { Mycontext } from '../App'
 import '../styles/login-page.css'
+import { useNavigate } from 'react-router-dom'
 
 export default function Login() {
 
     const GetContext = useContext(Mycontext)
-
+    const nav = useNavigate()
 
 
     const[userData,setUserData]= useState({
@@ -29,7 +30,10 @@ export default function Login() {
                 sessionStorage.setItem('currentUser',data.userFullName)
                 sessionStorage.setItem('isLogedIn',true)
                 sessionStorage.setItem('userId',data.userId)
-                // console.log(data);
+                sessionStorage.setItem('token',data.jwtToken)
+                sessionStorage.setItem('refresh-token',data.refreshJwtToken)
+                // console.log(data.jwtTocken);
+                nav('/')
            }else{
             alert('username or password is not correct')
            }
