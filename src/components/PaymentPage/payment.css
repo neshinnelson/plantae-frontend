@@ -1,0 +1,41 @@
+
+.payment-page{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.payment-container{
+    width: 25rem;
+    height: 25rem;
+    border: 2px solid #2e2e2e;
+    border-radius: 10px;
+    margin: 2rem;
+    padding: 2rem 1rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-evenly;
+}
+
+.amount-display{
+    background-color: #e0b26c;
+    width: 100%;
+    padding: .4rem .2rem ;
+    border-radius: 5px;
+
+}
+.enter-amount{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
+}
+
+
+
+.checkbox-w-h{
+    width: auto;
+    height: auto;
+}

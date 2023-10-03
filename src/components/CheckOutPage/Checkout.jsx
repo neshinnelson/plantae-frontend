@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../CheckOutPage/checkout.css'
-import { fetchCheckoutProductIds, fetchCheckoutProducts, fetchPlantsForCheckout, findTotalFunc, loadCheckoutProducts, updateAddress } from '../functions/functions'
+import { autoFillAddress, fetchCheckoutProductIds, fetchCheckoutProducts, fetchPlantsForCheckout, findTotalFunc, loadCheckoutProducts, removeFromCheckOut, updateAddress } from '../functions/functions'
 import { Mycontext } from '../../App'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { apiKey } from '../../static'
 
 
 export default function Checkout() {
@@ -11,6 +12,8 @@ export default function Checkout() {
     const {userId} = useParams()
 
     const [plants, setPlants] = useState([])
+    const [hasUserAddress, setHasUserAddress] = useState([])
+    const [addressIsLoaded, setAddressIsLoaded] = useState(false)
     const[userAddress,setUserAddress]= useState({})
     const[checkoutProductsId,setCheckoutProductsId]=useState([])
     const[checkoutProducts,setCheckoutProducts]=useState([])
@@ -18,10 +21,15 @@ export default function Checkout() {
     const [waiting, setwaiting] = useState()
     // const [refreshKey, setRefreshKey] = useState(window.location.reload)
 const allPlants = GetContext.allPlants 
-    console.log(GetContext.allPlants);
+    // console.log(GetContext.allPlants);
     //load checkout Products
     useEffect(()=>{
         const main = async()=>{
+            //fetching address of cliet if available
+            const address = await autoFillAddress(userId,apiKey)
+            if(address) setAddressIsLoaded(true)
+            // console.log(address);
+            setHasUserAddress(address.address)
             //fetching products for checkout
             const products = await fetchPlantsForCheckout(userId)
             // console.log('plants:', products);
@@ -48,12 +56,19 @@ const allPlants = GetContext.allPlants
       // saving address to data base
       const addAddress = async(event)=>{
         event.preventDefault()
-        console.log(userAddress);
+        // console.log(userAddress);
+        // if(addressIsLoaded) return console.log('already has user Address');
         if(!userAddress) return alert('Address field is empty')
         userAddress.userId = sessionStorage.getItem('userId')
        console.log( await updateAddress(userAddress))
        alert('working')
 
+    }
+
+    // handle remove checkout item
+    const handleRemoveCheckout = async(id)=>{
+       const data =  await removeFromCheckOut(userId,id)
+       console.log(data);
     }
 
     //transfering to payment window
@@ -74,7 +89,7 @@ const addToPayment = async()=>{
                     {/* customer email & phone number */}
                     <div className="customer-ph-email">
                     <h6>Contact</h6>
-                    <input type="text" placeholder='email'name='email' required/>
+                    <input type="text" placeholder='email'name='email' defaultValue={hasUserAddress.email||''} required/>
                     {/* checkbox div */}
                     <div className="check-box">
                         <input type="checkbox" name="email" checked/>
@@ -82,7 +97,7 @@ const addToPayment = async()=>{
                             Email me with news and offers
                         </label>
                     </div>
-                    <input type="text" placeholder='phone' name='phone' required/>
+                    <input type="text" placeholder='phone' name='phone' defaultValue={hasUserAddress.phone||''} required/>
                     {/* checkbox div */}
                     <div className="check-box">
                         <input type="checkbox" name="phone-no" checked/>
@@ -102,15 +117,15 @@ const addToPayment = async()=>{
                         </select>
                         {/* first name and second name div */}
                         <div className="first-second-name">
-                            <input type="text" placeholder='First Name' name='firstName' required/>
-                            <input type="text" placeholder='Last Name' name='secondName' required/>
+                            <input type="text" placeholder='First Name' name='firstName' defaultValue={hasUserAddress.firstName||''} required/>
+                            <input type="text" placeholder='Last Name' name='secondName' defaultValue={hasUserAddress.secondName||''}required/>
                         </div>
-                        <textarea cols="60" rows="2" placeholder='Address'name='address' required></textarea>
-                        <input type="text" placeholder='Appartment,suits,etc' name='appartment'/>
+                        <textarea cols="60" rows="2" placeholder='Address'name='address' defaultValue={hasUserAddress.address||''}required></textarea>
+                        <input type="text" placeholder='Appartment,suits,etc' defaultValue={hasUserAddress.appartment||''}name='appartment'/>
 
                         {/* city state and pincode div */}
                        <div className="city-state-pincode">
-                            <input type="text" placeholder='city' className='' name='city'/>
+                            <input type="text" placeholder='city' className='' name='city'defaultValue={hasUserAddress.city||''}/>
                                 <select className='select-state' placeholder='state' name='state' required>
                                     <option value="state">State</option>
                                     <option value="kerala">Kerala</option>
@@ -118,7 +133,7 @@ const addToPayment = async()=>{
                                     <option value="tamilnadu">Tamilnadu</option>
                                     <option value="delhi">Delhi</option>
                                 </select>
-                                <input type="text" placeholder='Pin Code' name='pincode' defaultValue={690521} required/>
+                                <input type="text" placeholder='Pin Code' name='pincode' defaultValue={hasUserAddress.pincode||''} required/>
                        </div>
 
                         {/* checkbox div */}
@@ -150,6 +165,7 @@ const addToPayment = async()=>{
                                 <p>quantity:1</p>
                             </div>
                             <h4>₹ {item.price}</h4>
+                            <button className='btn-sty-1' onClick={()=>handleRemoveCheckout(item._id)}>remove</button>
                         </div>
                     ))):<h6>Loading product...{waiting}</h6>
                 }

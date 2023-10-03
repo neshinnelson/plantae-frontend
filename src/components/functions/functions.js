@@ -1,5 +1,6 @@
 import axios from "axios";
 import { checkoutProducts } from "../CheckOutPage/checkoutProduct";
+import { apiKey } from "../../static";
 
 console.log('function is running');
 
@@ -77,7 +78,22 @@ export const findTotalFunc = (array)=>{
     )
 }
 
-//fetching user Address if av
+//fetching user Address if available
+export const autoFillAddress = async(userId,apiKey)=>{
+    if(!userId||!apiKey) return 'parameters are missing'
+    console.log(userId,apiKey);
+    try{
+        const res = await axios.get(process.env.REACT_APP_URL+`user-data/${userId}?apikey=${apiKey}&address=true`)
+        const data = res.data
+        // console.log(data);
+        // console.log(data.data,'----',data.address);
+        if(!data.data.address||'') return 'no adrress found'
+        return data.data 
+    }catch(err){
+        console.log('error in fetching address !');
+        console.error(err);
+    }
+}
 
 //saving address to db by updating user-data
 export const updateAddress = async(address)=>{
@@ -90,5 +106,18 @@ export const updateAddress = async(address)=>{
         console.log('error in adding address to user-data');
         console.error(err);
     }
+}
+
+//delete item from checkout
+export const removeFromCheckOut = async(userId,itemId)=>{
+    console.log(itemId);
+            try{
+                const res = await axios.delete(process.env.REACT_APP_URL+`checkout/${userId}?apikey=${apiKey}&itemId=${itemId}`)
+                const data = res.data
+                console.log(data);
+            }catch(err){
+                console.log('error deleting! wrong id!');
+                console.error(err);
+            }
 }
 
