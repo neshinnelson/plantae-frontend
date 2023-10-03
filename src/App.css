@@ -13,8 +13,9 @@ body{
   color: antiquewhite;
   border: none;
   border-radius: 10px;
-  width: 5rem;
-  height: 2rem;
+  /* width: 5rem; */
+  /* height: 2rem; */
+  padding: .4rem 1.5rem;
   margin-right: .5rem;
   transition: background-color 100ms;
   transition-timing-function: ease
@@ -27,11 +28,15 @@ body{
   border: 2px solid #975d11;
   border-radius: 10px;
   background:none;
-  width: 5rem;
-  height: 2rem;
+  /* width: 5rem; */
+  /* height: 2rem; */
+  padding: .3rem 1rem;
   margin-right: .5rem;
 }
 .btn-sty-2:active{
   background-color: #b8823b;
   border: 1px solid #975d11;
+}
+.sub-heading{
+  margin-top: 2rem;
 }

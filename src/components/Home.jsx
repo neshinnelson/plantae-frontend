@@ -13,41 +13,20 @@ export default function Home() {
   const GetContext = useContext(Mycontext)
   const nav = useNavigate()
 
-  const [allPlants,setAllPlants] = useState([])
+  const [allPlants,setAllPlants] = useState(GetContext?.allPlants)
   const[displayArray,setDisplayArray]=useState([])
-  const [randomNum, setRandomNum] = useState()
-  const [randomNum2, setRandomNum2] = useState()
-  const [randomNum3, setRandomNum3] = useState()
-  const [randomNum4, setRandomNum4] = useState()
-  const [randomNum5, setRandomNum5] = useState()
-  const [randomNum6, setRandomNum6] = useState()
-  const [randomNum7, setRandomNum7] = useState()
-  const [randomNum8, setRandomNum8] = useState()
+  const [randomNum, setRandomNum] = useState({
+    ind1:Math.floor(Math.random()*44),
+    ind2:Math.floor(Math.random()*44),
+    ind3:Math.floor(Math.random()*44),
+    ind4:Math.floor(Math.random()*44),
+    ind5:Math.floor(Math.random()*44),
+    ind6:Math.floor(Math.random()*44),
+    ind7:Math.floor(Math.random()*44),
+    ind8:Math.floor(Math.random()*44),
+  })
   const baseUrl = process.env.REACT_APP_URL
 
-  useEffect(()=>{
-    const fetchAllPlants = async ()=>{
-      try{
-        const response = await axios.get(process.env.REACT_APP_URL+'plants/filter?category=')
-        const data = response.data
-
-        setAllPlants(data)
-        // console.log(data);
-        setRandomNum(Math.floor(Math.random()*data.length))
-        setRandomNum2(Math.floor(Math.random()*data.length))
-        setRandomNum3(Math.floor(Math.random()*data.length))
-        setRandomNum4(Math.floor(Math.random()*data.length))
-        setRandomNum5(Math.floor(Math.random()*data.length))
-        setRandomNum6(Math.floor(Math.random()*data.length))
-        setRandomNum7(Math.floor(Math.random()*data.length))
-        setRandomNum8(Math.floor(Math.random()*data.length))
-      }
-      catch(err){
-        console.error('unable to fetch data now',err);
-      }
-    }
-    fetchAllPlants()
-  },[])
 
   const addToCart = async(img,name,rating,price,category,potColor)=>{
     if(sessionStorage.getItem("isLogedIn")==="true"){
@@ -63,7 +42,7 @@ export default function Home() {
           potColor:potColor,
         })
         const data = res.data
-        console.log(data)
+        // console.log(data)
         GetContext.setTrigger(Math.random())
         nav('/cart')
       }
@@ -83,7 +62,7 @@ export default function Home() {
           potColor:potColor
         })
         const data = res.data
-        console.log(data)
+        // console.log(data)
         console.log('item posted to temperary cart');
         nav('/cart')
       }
@@ -93,16 +72,26 @@ export default function Home() {
     }
     
   }
-  const arr = [allPlants[randomNum],allPlants[randomNum5],
-               allPlants[randomNum2],allPlants[randomNum3],
-               allPlants[randomNum4],allPlants[randomNum7],
-              allPlants[randomNum6],allPlants[randomNum8]]
+
+  //destructuring object randomNum
+  const {
+    ind1,ind2,
+    ind3,ind4,
+    ind5,ind6,
+    ind7,ind8
+  } = randomNum;
+  const arr = [GetContext?.allPlants[ind1],GetContext?.allPlants[ind2],
+               GetContext?.allPlants[ind3],GetContext?.allPlants[ind4],
+               GetContext?.allPlants[ind5],GetContext?.allPlants[ind6],
+              GetContext?.allPlants[ind7],GetContext?.allPlants[ind8]]
   // console.log(allPlants);
   // console.log(arr);
+  // console.log('home');
+  // console.log(randomNum.ind1);
+  // console.log(randomNum.ind5);
 
   // redirecting to /single-plant-window
   const handleClickToPalntWindow = async(plantName)=>{
-    alert(plantName)
     nav(`/plant-window/${plantName}`)
   }
   return (
@@ -132,10 +121,6 @@ export default function Home() {
 
         }
         </div>
-         
-
-        
-
     </div>
   )
 }

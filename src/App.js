@@ -15,9 +15,10 @@ import axios from 'axios';
 import Test from './components/Test';
 import SinglePlantPage from './components/SinglePlantPage';
 import SpecialOfferPage from './components/SpecialOfferPage';
+import Checkout from './components/CheckOutPage/Checkout';
+import Payment from './components/PaymentPage/Payment';
 
 export const Mycontext = createContext()
-
 
 function App() {
 
@@ -25,8 +26,11 @@ function App() {
   const [isLogedIn, setIsLogedIn] = useState(false)
   const [currentUser, setCurrentUser] = useState('')
   const[cart,setCart]=useState([])
+  const[cartTotal,setCartTotal]=useState(0)
   const [trigger,setTrigger]=useState(0)
   const url = process.env.REACT_APP_URL
+  const [allPlants,setAllPlants] = useState([])
+  const[recentBought,setResentBought]=useState([])
   // console.log(newCart);
 
   useEffect(()=>{
@@ -36,6 +40,8 @@ function App() {
         const data = res.data
         console.log(data);
         setCart(data.data)
+        const total = data.data.reduce((acc,item)=>acc + item.price,0)
+        setCartTotal(total)
       }
       catch(err){
         console.error('unable to fetch cart data now',err);
@@ -46,12 +52,34 @@ function App() {
     fetchingCartFromDb()
   },[trigger])
 
+  useEffect(()=>{
+    const fetchAllPlants = async ()=>{
+      try{
+        const response = await axios.get(process.env.REACT_APP_URL+'plants/filter?category=')
+        const data = response.data
+
+        setAllPlants(data)
+        allPlants = data
+        setResentBought([data[3],data[34],data[22],data[11]])
+        console.log(data)
+      }
+      catch(err){
+        console.error('unable to fetch all plants now',err);
+      }
+    }
+    fetchAllPlants()
+  },[])
+
+  
+
   console.log(cart);
+  console.log('all plants length: ',allPlants.length);
   return (
     <div className="App">
       <BrowserRouter>
         <Mycontext.Provider value={{
-          setCurrentUser,setIsLogedIn,isLogedIn,currentUser,cart,setTrigger,trigger}}>
+          setCurrentUser,setIsLogedIn,isLogedIn,currentUser,cart,setTrigger,trigger,allPlants,
+          recentBought,cartTotal}}>
           <NavBars/>
           <CategoryBar/>
           <Routes>
@@ -62,6 +90,8 @@ function App() {
             <Route path='/signup' element={<Signup/>}/>
             <Route path='/login' element={<Login/>}/>
             <Route path='/todays-offer' element={<SpecialOfferPage/>}/>
+            <Route path='/checkout/:userId' element={<Checkout/>}/>
+            <Route path='/payment/:userId' element={<Payment/>}/>
             <Route path='*' element={<NotFoundPage/>}/>
             <Route path='/test' element={<Test/>}/>
           </Routes>

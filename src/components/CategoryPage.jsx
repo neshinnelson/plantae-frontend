@@ -11,12 +11,12 @@ export default function CategoryPage() {
     const nav = useNavigate()
 
     const baseUrl = process.env.REACT_APP_URL;
-    console.log(baseUrl);
+    // console.log(baseUrl);
     const[description,setDescription]=useState('')
     const[category,setCategory]=useState('')
     const [plants, setPlants] = useState([])
     const urlEndPoint = name.split('-').join('%20')
-    console.log(urlEndPoint);
+    // console.log(urlEndPoint);
     let url =  baseUrl+'category?category='+urlEndPoint
     let url2 = baseUrl+'plants/filter?category='+urlEndPoint
 
@@ -106,8 +106,7 @@ export default function CategoryPage() {
     }
 
   // redirecting to /single-plant-window
-  const handleClickToPalntWindow = async(plantName)=>{
-    alert(plantName)
+  const handleClickToPalntWindow = (plantName)=>{
     nav(`/plant-window/${plantName}`)
   }
 
@@ -150,7 +149,7 @@ export  const DisplayItemContainerComp = ({img,name,rating,price,btnFunc,redirec
             </div>
             <ul>
               <li>{rating} ⭐</li>
-              <li>{price}₹</li>
+              <li>₹{price}</li>
               <button className='btn-sty-1' onClick={btnFunc}>cart</button>
               <button className='btn-sty-2'onClick={()=>alert('not yet assigned')}>view item</button>
             </ul>

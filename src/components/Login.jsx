@@ -52,7 +52,7 @@ export default function Login() {
             <input type="text" onChange={(e)=>setUserData({...userData,userName:e.target.value})}/>
 
             <label >password</label>
-            <input type="text" onChange={(e)=>setUserData({...userData,password:e.target.value})}/>
+            <input type="password" onChange={(e)=>setUserData({...userData,password:e.target.value})}/>
 
             <input type="submit" value='submit' className='btn-sty-1'/>
             </form>

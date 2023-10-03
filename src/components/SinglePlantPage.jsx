@@ -1,20 +1,28 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../styles/single-plant-page.css'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams} from 'react-router-dom'
 import axios from 'axios';
+import { DisplayItemContainerComp } from './CategoryPage';
+import { Mycontext } from '../App';
+import { BuyNowFunc } from './functions/functions';
 
 export default function SinglePlantPage() {
     const {name} = useParams()
+    const GetContext = useContext(Mycontext)
+    const nav = useNavigate()
+    const baseUrl = process.env.REACT_APP_URL
+    const userId = sessionStorage.getItem('userId')
 
     const[plantDetails,setPlantDetails]=useState([])
     let [mainImg,setMainImg]=useState('') 
+    
 
     useEffect(()=>{
         const fetchPlant = async()=>{
             try{
                 const res = await axios.get(process.env.REACT_APP_URL+`plants/filter?plantName=${name}`)
                 const data = res.data
-                console.log(data);
+                // console.log(data);
                 setPlantDetails(data)
                 setMainImg(data[0]?.imgLinks[0])
                }
@@ -25,10 +33,63 @@ export default function SinglePlantPage() {
       fetchPlant()
     },[])
 
+    //adding to cart
+    const addToCart = async(img,name,rating,price,category,potColor)=>{
+        if(sessionStorage.getItem("isLogedIn")==="true"){
+          try{
+            const res = await axios.post(baseUrl+'cart',{
+              userId:sessionStorage.getItem('userId'),
+              category:category,
+              name:name,
+              imgLinks:img,
+              price:price,
+              rating:rating,
+              quantity:1,
+              potColor:potColor,
+            })
+            const data = res.data
+            // console.log(data)
+            GetContext.setTrigger(Math.random())
+            nav('/cart')
+          }
+          catch(err){
+            console.error('unable to post item to cart now', err);
+          }
+        }
+        else{
+          try{
+            const res = await axios.post(baseUrl+'temp-cart',{
+              category:category,
+              name:name,
+              imgLinks:img,
+              price:price,
+              rating,rating,
+              quantity:1,
+              potColor:potColor
+            })
+            const data = res.data
+            // console.log(data)
+            console.log('item posted to temperary cart');
+            nav('/cart')
+          }
+          catch(err){
+            console.error('unable to post item to temperary cart now',err)
+          }
+        }
+        
+      }
+
     // changing the main plant image on click
     const handleMainImg = (img)=>{
        setMainImg(img)
     }
+
+      // redirecting to /single-plant-window
+  const handleClickToPalntWindow = async(plantName)=>{
+    // nav(`/plant-window/${plantName}`)
+    window.location.pathname = `/plant-window/${plantName}`
+  }
+
   return (
     <div className='single-plant-window'>
         <h2 className="plant-category">{plantDetails[0]?.category}</h2>
@@ -48,7 +109,7 @@ export default function SinglePlantPage() {
             <div className="about-plant-box">
                 <h6 className="plant-category">{plantDetails[0]?.category}</h6>
                 <h3 className="plant-name">{plantDetails[0]?.name}</h3>
-                <h4 className='plant-price'>{plantDetails[0]?.price} ₹</h4>
+                <h4 className='plant-price'>₹ {plantDetails[0]?.price}</h4>
                 <h5 className='plant-description'>{plantDetails[0]?.description}</h5>
                 <h5 className='plant-rating'>{plantDetails[0]?.rating} ⭐</h5>
                 <h5 className='plant-height'>{plantDetails[0]?.height} cm</h5>
@@ -61,8 +122,39 @@ export default function SinglePlantPage() {
                 ))}                
                 <h4 className="plant-stock">stock: {plantDetails[0]?.stock}</h4>
                 <h5 className='delivery-time'>delivery time: {plantDetails[0]?.shippingTime} days</h5>
+                <button className="btn-sty-1 btn-width" onClick={()=>BuyNowFunc(plantDetails[0]._id,userId)}>Buy Now</button>
+                <button className="btn-sty-2 btn-width"
+                   onClick={()=>addToCart(plantDetails[0].imgLinks[0],
+                    plantDetails[0]?.name,
+                    plantDetails[0]?.rating,
+                    plantDetails[0]?.price,
+                    plantDetails[0]?.category,
+                    plantDetails[0]?.potColor[0]
+                    )}>Add to cart</button>
             </div>
         </div>
+
+        {/* Displaying other related products  */}
+        <h2 className='sub-heading'>Customers Recent Bought</h2>
+       <div className="display-container">
+       {GetContext?.recentBought.map((item,index)=>(
+          <div key={index}>
+           <DisplayItemContainerComp
+           img={item?.imgLinks[0]}
+           name={item?.name}
+           rating={item?.rating}
+           price={item?.price}
+           category={item?.category}
+           btnFunc={
+            ()=>addToCart(item.imgLinks[0],item.name,item.rating,item.price,item.category,item.potColor[0])}
+           redirectFunc ={()=>handleClickToPalntWindow(item.name)}
+           />
+           </div>
+        ))
+
+        }
+       </div>
+        
 
     </div>
   )

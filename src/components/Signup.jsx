@@ -29,8 +29,12 @@ export default function Signup() {
             })
             const data = response.data
             // console.log(data);
-            data.response==='success'?alert('user registered'):alert('check the fields')
-            nav('/login')
+            // data.response==='success'?alert('user registered'):alert('check the fields')
+            if(data.response==='success') {
+                alert('user registered')
+                nav('/login')
+            } else{alert('check the fields')}
+            
         }
         catch(err){
             console.error(err);
@@ -55,7 +59,7 @@ export default function Signup() {
                 <input type="text" onChange={(e)=>setUserData({...userData,userName:e.target.value})}/>
 
                 <label htmlFor="password">Password</label>
-                <input type="text" onChange={(e)=>setUserData({...userData,password:e.target.value})}/>
+                <input type="password" onChange={(e)=>setUserData({...userData,password:e.target.value})}/>
 
                 <label htmlFor="phone">Phone</label>
                 <input type="number"  onChange={(e)=>setUserData({...userData,phone:e.target.value})}/>

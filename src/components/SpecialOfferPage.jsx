@@ -5,6 +5,7 @@ export default function SpecialOfferPage() {
 
     const [offer,setOffer]= useState([])
     let[token,setToken]=useState(sessionStorage.getItem('token'))
+    let [mainImg,setMainImg]=useState('') 
 
    useEffect(()=>{
     const fetchOffer = async(token)=>{
@@ -51,8 +52,48 @@ export default function SpecialOfferPage() {
         }
     }
    },[])
+
+   
+    // changing the main plant image on click
+    const handleMainImg = (img)=>{
+        setMainImg(img)
+     }
+
   return (
 
-    <div>SpecialOfferPage</div>
+    <div>
+        <h1>SpecialOfferPage</h1>
+        <div className='plant-details-container'>
+            <div className="left-img-box">
+
+                {/* mapping plant image links */}
+                {offer[0]?.imgLinks.map((img,index)=>(
+                    <div className="multi-img" key={index}>
+                        <img src={img} alt="plant image" onClick={()=>handleMainImg(img)}/>   
+                    </div>
+                ))}
+            </div>
+            <div className="main-img-box">
+                <img src={mainImg} alt="plant-image" />
+            </div>
+            <div className="about-plant-box">
+                <h6 className="plant-category">{offer[0]?.category}</h6>
+                <h3 className="plant-name">{offer[0]?.name}</h3>
+                <h4 className='plant-price'>{offer[0]?.price} ₹</h4>
+                <h5 className='plant-description'>{offer[0]?.description}</h5>
+                <h5 className='plant-rating'>{offer[0]?.rating} ⭐</h5>
+                <h5 className='plant-height'>{offer[0]?.height} cm</h5>
+                
+                {/* mapping potcolors */}
+                {offer[0]?.potColor.map((color,index)=>(
+                    <div className="pot-color" key={index}>
+                        <h5 className="plant-pot-color">pot color:{color}</h5>
+                    </div>
+                ))}                
+                <h4 className="plant-stock">stock: {offer[0]?.stock}</h4>
+                <h5 className='delivery-time'>delivery time: {offer[0]?.shippingTime} days</h5>
+            </div>
+        </div>
+    </div>
   )
 }
