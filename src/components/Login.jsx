@@ -3,6 +3,7 @@ import React, { useContext, useState } from 'react'
 import { Mycontext } from '../App'
 import '../styles/login-page.css'
 import { useNavigate } from 'react-router-dom'
+import { apiKey, baseUrl } from '../static'
 
 export default function Login() {
 
@@ -18,21 +19,21 @@ export default function Login() {
     const login =  async(e)=>{
         e.preventDefault()
         try{
-            const response = await axios.post('http://localhost:4000/user-data/authorise',{
+            const response = await axios.post(`${baseUrl}/user-data/authorise?apikey=${apiKey}`,{
                 userName:userData.userName,
                 password:userData.password
             })
             const data = response.data
+            console.log(data);
            if(data.response==='success'){
                 alert('user loged in')
                 GetContext.setIsLogedIn(true)
                 GetContext.setCurrentUser(data.userFullName)
-                sessionStorage.setItem('currentUser',data.userFullName)
+                sessionStorage.setItem('currentUser',data.userDetails.fullName)
                 sessionStorage.setItem('isLogedIn',true)
-                sessionStorage.setItem('userId',data.userId)
-                sessionStorage.setItem('token',data.jwtToken)
-                sessionStorage.setItem('refresh-token',data.refreshJwtToken)
-                // console.log(data.jwtTocken);
+                sessionStorage.setItem('userId',data.userDetails.userId)
+                sessionStorage.setItem('token',data.tokens.token)
+                sessionStorage.setItem('refresh-token',data.tokens.refreshToken)
                 nav('/')
            }else{
             alert('username or password is not correct')

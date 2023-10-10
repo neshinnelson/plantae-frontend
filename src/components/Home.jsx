@@ -7,6 +7,7 @@ import axios from 'axios'
 import { DisplayItemContainerComp } from './CategoryPage'
 import { Mycontext } from '../App'
 import { useNavigate } from 'react-router-dom'
+import { addToCart } from './functions/functions'
 
 export default function Home() {
 
@@ -16,62 +17,15 @@ export default function Home() {
   const [allPlants,setAllPlants] = useState(GetContext?.allPlants)
   const[displayArray,setDisplayArray]=useState([])
   const [randomNum, setRandomNum] = useState({
-    ind1:Math.floor(Math.random()*44),
-    ind2:Math.floor(Math.random()*44),
-    ind3:Math.floor(Math.random()*44),
-    ind4:Math.floor(Math.random()*44),
-    ind5:Math.floor(Math.random()*44),
-    ind6:Math.floor(Math.random()*44),
-    ind7:Math.floor(Math.random()*44),
-    ind8:Math.floor(Math.random()*44),
+    ind1:Math.floor(Math.random()*42),
+    ind2:Math.floor(Math.random()*42),
+    ind3:Math.floor(Math.random()*42),
+    ind4:Math.floor(Math.random()*42),
+    ind5:Math.floor(Math.random()*42),
+    ind6:Math.floor(Math.random()*42),
+    ind7:Math.floor(Math.random()*42),
+    ind8:Math.floor(Math.random()*42),
   })
-  const baseUrl = process.env.REACT_APP_URL
-
-
-  const addToCart = async(img,name,rating,price,category,potColor)=>{
-    if(sessionStorage.getItem("isLogedIn")==="true"){
-      try{
-        const res = await axios.post(baseUrl+'cart',{
-          userId:sessionStorage.getItem('userId'),
-          category:category,
-          name:name,
-          imgLinks:img,
-          price:price,
-          rating:rating,
-          quantity:1,
-          potColor:potColor,
-        })
-        const data = res.data
-        // console.log(data)
-        GetContext.setTrigger(Math.random())
-        nav('/cart')
-      }
-      catch(err){
-        console.error('unable to post item to cart now', err);
-      }
-    }
-    else{
-      try{
-        const res = await axios.post(baseUrl+'temp-cart',{
-          category:category,
-          name:name,
-          imgLinks:img,
-          price:price,
-          rating,rating,
-          quantity:1,
-          potColor:potColor
-        })
-        const data = res.data
-        // console.log(data)
-        console.log('item posted to temperary cart');
-        nav('/cart')
-      }
-      catch(err){
-        console.error('unable to post item to temperary cart now',err)
-      }
-    }
-    
-  }
 
   //destructuring object randomNum
   const {
@@ -105,7 +59,7 @@ export default function Home() {
 
         <div className='display-container'>
         {arr?.map((item)=>(
-          <div key={item?.name}>
+          <div key={item?.platId}>
            <DisplayItemContainerComp
            img={item?.imgLinks[0]}
            name={item?.name}
@@ -113,7 +67,7 @@ export default function Home() {
            price={item?.price}
            category={item?.category}
            btnFunc={
-            ()=>addToCart(item.imgLinks[0],item.name,item.rating,item.price,item.category,item.potColor[0])}
+            ()=>addToCart(item)}
            redirectFunc ={()=>handleClickToPalntWindow(item.name)}
            />
            </div>

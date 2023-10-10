@@ -5,12 +5,14 @@ import axios from 'axios';
 import { DisplayItemContainerComp } from './CategoryPage';
 import { Mycontext } from '../App';
 import { BuyNowFunc } from './functions/functions';
+import { apiKey,baseUrl } from '../static';
+import { addToCart } from './functions/functions';
 
 export default function SinglePlantPage() {
     const {name} = useParams()
     const GetContext = useContext(Mycontext)
     const nav = useNavigate()
-    const baseUrl = process.env.REACT_APP_URL
+
     const userId = sessionStorage.getItem('userId')
 
     const[plantDetails,setPlantDetails]=useState([])
@@ -20,9 +22,8 @@ export default function SinglePlantPage() {
     useEffect(()=>{
         const fetchPlant = async()=>{
             try{
-                const res = await axios.get(process.env.REACT_APP_URL+`plants/filter?plantName=${name}`)
-                const data = res.data
-                // console.log(data);
+                const res = await axios.get(`${baseUrl}/plants?apikey=${apiKey}&name=${name}`)
+                const data = res.data.data
                 setPlantDetails(data)
                 setMainImg(data[0]?.imgLinks[0])
                }
@@ -32,52 +33,6 @@ export default function SinglePlantPage() {
         }
       fetchPlant()
     },[])
-
-    //adding to cart
-    const addToCart = async(img,name,rating,price,category,potColor)=>{
-        if(sessionStorage.getItem("isLogedIn")==="true"){
-          try{
-            const res = await axios.post(baseUrl+'cart',{
-              userId:sessionStorage.getItem('userId'),
-              category:category,
-              name:name,
-              imgLinks:img,
-              price:price,
-              rating:rating,
-              quantity:1,
-              potColor:potColor,
-            })
-            const data = res.data
-            // console.log(data)
-            GetContext.setTrigger(Math.random())
-            nav('/cart')
-          }
-          catch(err){
-            console.error('unable to post item to cart now', err);
-          }
-        }
-        else{
-          try{
-            const res = await axios.post(baseUrl+'temp-cart',{
-              category:category,
-              name:name,
-              imgLinks:img,
-              price:price,
-              rating,rating,
-              quantity:1,
-              potColor:potColor
-            })
-            const data = res.data
-            // console.log(data)
-            console.log('item posted to temperary cart');
-            nav('/cart')
-          }
-          catch(err){
-            console.error('unable to post item to temperary cart now',err)
-          }
-        }
-        
-      }
 
     // changing the main plant image on click
     const handleMainImg = (img)=>{
@@ -122,15 +77,9 @@ export default function SinglePlantPage() {
                 ))}                
                 <h4 className="plant-stock">stock: {plantDetails[0]?.stock}</h4>
                 <h5 className='delivery-time'>delivery time: {plantDetails[0]?.shippingTime} days</h5>
-                <button className="btn-sty-1 btn-width" onClick={()=>BuyNowFunc(plantDetails[0]._id,userId)}>Buy Now</button>
+                <button className="btn-sty-1 btn-width" onClick={()=>BuyNowFunc(plantDetails[0])}>Buy Now</button>
                 <button className="btn-sty-2 btn-width"
-                   onClick={()=>addToCart(plantDetails[0].imgLinks[0],
-                    plantDetails[0]?.name,
-                    plantDetails[0]?.rating,
-                    plantDetails[0]?.price,
-                    plantDetails[0]?.category,
-                    plantDetails[0]?.potColor[0]
-                    )}>Add to cart</button>
+                   onClick={()=>addToCart(plantDetails[0])}>Add to cart</button>
             </div>
         </div>
 
@@ -146,7 +95,7 @@ export default function SinglePlantPage() {
            price={item?.price}
            category={item?.category}
            btnFunc={
-            ()=>addToCart(item.imgLinks[0],item.name,item.rating,item.price,item.category,item.potColor[0])}
+            ()=>addToCart(item)}
            redirectFunc ={()=>handleClickToPalntWindow(item.name)}
            />
            </div>

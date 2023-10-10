@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import '../styles/category-page.css'
 import axios from 'axios'
 import { Mycontext } from '../App'
+import { apiKey,baseUrl } from '../static'
+import { addToCart } from './functions/functions'
 
 export default function CategoryPage() {
 
@@ -10,22 +12,19 @@ export default function CategoryPage() {
     const GetContext = useContext(Mycontext)
     const nav = useNavigate()
 
-    const baseUrl = process.env.REACT_APP_URL;
-    // console.log(baseUrl);
     const[description,setDescription]=useState('')
     const[category,setCategory]=useState('')
     const [plants, setPlants] = useState([])
     const urlEndPoint = name.split('-').join('%20')
-    // console.log(urlEndPoint);
-    let url =  baseUrl+'category?category='+urlEndPoint
-    let url2 = baseUrl+'plants/filter?category='+urlEndPoint
+
+    let url =  baseUrl+`/category?apikey=${apiKey}&name=`+urlEndPoint
+    let url2 = baseUrl+`/plants?apikey=${apiKey}&category=`+urlEndPoint
 
     useEffect(()=>{
       let categoryDetails = async ()=>{
         try{
           const response = await axios.get(url);
-        const data = response.data
-        console.log(data);
+        const data = response.data.resData
         setDescription(data)
         }
         catch(err){
@@ -35,7 +34,7 @@ export default function CategoryPage() {
       let fetchPlants = async ()=>{
         try{
           const response = await axios.get(url2);
-        const data = response.data
+        const data = response.data.data
         console.log(data);
         setPlants(data)
         }
@@ -47,51 +46,6 @@ export default function CategoryPage() {
       fetchPlants()
       
     },[name])
-
-    const addToCart = async(img,name,rating,price,category,potColor)=>{
-      if(sessionStorage.getItem("isLogedIn")==="true"){
-        try{
-          const res = await axios.post(baseUrl+'cart',{
-            userId:sessionStorage.getItem('userId'),
-            category:category,
-            name:name,
-            imgLinks:img,
-            price:price,
-            rating:rating,
-            quantity:1,
-            potColor:potColor,
-          })
-          const data = res.data
-          console.log(data)
-          GetContext.setTrigger(Math.random())
-          nav('/cart')
-        }
-        catch(err){
-          console.error('unable to post item to cart now', err);
-        }
-      }
-      else{
-        try{
-          const res = await axios.post(baseUrl+'temp-cart',{
-            category:category,
-            name:name,
-            imgLinks:img,
-            price:price,
-            rating,rating,
-            quantity:1,
-            potColor:potColor
-          })
-          const data = res.data
-          console.log(data)
-          console.log('item posted to temperary cart');
-          nav('/cart')
-        }
-        catch(err){
-          console.error('unable to post item to temperary cart now',err)
-        }
-      }
-      
-    }
   
     const addToWishList = (img,name,rating,price,category)=>{
       const action = {type:'add',
@@ -129,7 +83,7 @@ export default function CategoryPage() {
                                      rating={item?.rating}
                                      price={item?.price}
                                      category={item?.category}
-                                     btnFunc={()=>addToCart(item.imgLinks[0],item.name,item.rating,item.price,item.category,item.potColor[0])}
+                                     btnFunc={()=>addToCart(item)}
                                      redirectFunc ={()=>handleClickToPalntWindow(item.name)}/>
 
             </div>

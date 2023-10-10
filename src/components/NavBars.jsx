@@ -10,6 +10,10 @@ export default function NavBars() {
   return (
     <div className='nav-bar'>
         <h2 onClick={()=>nav('/')}>Plantae</h2>
+        <div className="search-container">
+          <input type="text" className='search-box' placeholder='search plants...'/>
+          <button className="clr-alm" >search</button>
+        </div>
         <ul className='right-end'>
            <li onClick={()=>nav('/cart')}>cart</li>
            <li onClick={()=>nav('/signup')}>signup</li>

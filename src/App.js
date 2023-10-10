@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import NavBars from './components/NavBars';
@@ -17,11 +17,13 @@ import SinglePlantPage from './components/SinglePlantPage';
 import SpecialOfferPage from './components/SpecialOfferPage';
 import Checkout from './components/CheckOutPage/Checkout';
 import Payment from './components/PaymentPage/Payment';
+import { apiKey, baseUrl } from './static';
+import MiniLogin from './components/MiniLogin/MiniLogin';
+import ServerError from './components/ServerError/ServerError';
 
 export const Mycontext = createContext()
 
 function App() {
-
 
   const [isLogedIn, setIsLogedIn] = useState(false)
   const [currentUser, setCurrentUser] = useState('')
@@ -35,19 +37,29 @@ function App() {
 
   useEffect(()=>{
     const fetchingCartFromDb = async()=>{
-      try{
-        const res = await axios.get(url+'cart/'+sessionStorage.getItem('userId'))
-        const data = res.data
-        console.log(data);
-        setCart(data.data)
-        const total = data.data.reduce((acc,item)=>acc + item.price,0)
-        setCartTotal(total)
+      if(sessionStorage.getItem('isLogedIn')==='true'){
+        try{
+          const res = await axios.get(`${baseUrl}/cart/${sessionStorage.getItem('userId')}?apikey=${apiKey}`,{
+            headers:{
+              "Authorization" : `Bearer ${sessionStorage.getItem('token')}`,
+              "Content-Type" : "Application/json"
+            }
+          })
+          const data = res.data
+          console.log(data);
+          setCart(data.data)
+          const total = data.data.reduce((acc,item)=>acc + item.price,0)
+          setCartTotal(total)
+        }
+        catch(err){
+          console.error('unable to fetch cart data now',err);
+          if(err.request.status===401){
+            // window.location.href = '/quick-login'
+            alert('session time out! login to continue')
+          }
+        }
       }
-      catch(err){
-        console.error('unable to fetch cart data now',err);
-        // alert('user is not logedin')
-        console.log('user is not logedin');
-      }
+     
     }
     fetchingCartFromDb()
   },[trigger])
@@ -55,16 +67,15 @@ function App() {
   useEffect(()=>{
     const fetchAllPlants = async ()=>{
       try{
-        const response = await axios.get(process.env.REACT_APP_URL+'plants/filter?category=')
-        const data = response.data
-
+        const response = await axios.get(process.env.REACT_APP_URL+`plants?apikey=${apiKey}`)
+        const data = response.data.data
+      
         setAllPlants(data)
-        allPlants = data
-        setResentBought([data[3],data[34],data[22],data[11]])
-        console.log(data)
+        setResentBought([...recentBought,data[3],data[34],data[22],data[11]]) 
       }
       catch(err){
         console.error('unable to fetch all plants now',err);
+        alert('error fetching all plants')
       }
     }
     fetchAllPlants()
@@ -89,11 +100,13 @@ function App() {
             <Route path='/cart' element={<Cart/>}/>
             <Route path='/signup' element={<Signup/>}/>
             <Route path='/login' element={<Login/>}/>
+            <Route path='/quick-login' element={<MiniLogin/>}/>
             <Route path='/todays-offer' element={<SpecialOfferPage/>}/>
             <Route path='/checkout/:userId' element={<Checkout/>}/>
-            <Route path='/payment/:userId' element={<Payment/>}/>
+            <Route path='/payment/:id' element={<Payment/>}/>
             <Route path='*' element={<NotFoundPage/>}/>
             <Route path='/test' element={<Test/>}/>
+            <Route path='/server-error' element={<ServerError/>}/>
           </Routes>
         </Mycontext.Provider>
       </BrowserRouter>

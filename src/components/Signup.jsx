@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useState } from 'react'
 import '../styles/signup-page.css'
 import { useNavigate } from 'react-router-dom'
+import { apiKey, baseUrl } from '../static'
 
 export default function Signup() {
     const nav = useNavigate()
@@ -19,7 +20,7 @@ export default function Signup() {
         e.preventDefault()
         // console.log(userData);
         try{
-            const response = await axios.post('http://localhost:4000/user-data',{
+            const response = await axios.post(`${baseUrl}/user-data?apikey=${apiKey}`,{
                 firstName:userData.firstName,
                 secondName:userData.secondName,
                 email:userData.email,
@@ -28,8 +29,7 @@ export default function Signup() {
                 phone:parseFloat(Number(userData.phone))
             })
             const data = response.data
-            // console.log(data);
-            // data.response==='success'?alert('user registered'):alert('check the fields')
+            console.log(data);
             if(data.response==='success') {
                 alert('user registered')
                 nav('/login')

@@ -6,6 +6,25 @@
     align-items: center;
     justify-content: space-between;
 }
+.search-container{
+    /* background-color: blue; */
+    display: flex;
+    align-items: center;
+}
+.search-box{
+    width: auto;
+    height: 3.1rem;
+    background-color: antiquewhite;
+    border-radius: 5px 0 0 5px
+}
+.clr-alm{
+    background-color: antiquewhite;
+    color: #292929;
+    height: 3.1rem;
+    padding: 1rem;
+    border: none;
+    border-radius:0 5px 5px 0;
+}
 .right-end{
     display: flex;
     gap: 2rem;

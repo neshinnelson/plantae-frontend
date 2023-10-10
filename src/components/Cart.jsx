@@ -3,18 +3,19 @@ import '../styles/cart-page.css'
 import { Mycontext } from '../App'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { apiKey, baseUrl } from '../static'
 
 export default function Cart() {
     const GetContext = useContext(Mycontext)
     const nav = useNavigate()
-    const url = process.env.REACT_APP_URL
+    
     const[tempCart,setTempCart]=useState([])
     const[tempCartTotal,setTempCartTotal]=useState(0)
 
-    const removeItemFromCartServer = async(itemId)=>{
+    const removeItemFromCartServer = async(item)=>{
         if(sessionStorage.getItem('isLogedIn')==="true"){
             try{
-                const res = await axios.delete(url+`cart/${itemId}`)
+                const res = await axios.delete(`${baseUrl}/cart/${item.plantId}?apikey=${apiKey}`)
                 const data = res.data
              //    console.log(data);
                 console.log('item deleted from cart');
@@ -27,9 +28,9 @@ export default function Cart() {
         //removing from temperary cart
         else{
             try{
-                const res = await axios.delete(url+"temp-cart/"+itemId)
+                const res = await axios.delete(`${baseUrl}/temp-cart/${item.plantId}?apikey=${apiKey}`)
                 const data = res.data
-                // console.log(data);
+                if(data.response==='failed') return console.log('server');
                 GetContext.setTrigger(Math.random())
                 console.log('item was deleted from temperary cart');
             }
@@ -43,7 +44,7 @@ export default function Cart() {
     // fetching & saving temperary cart to state tempCart
     useEffect(()=>{
         const fetchTempCart = async()=>{
-            const res = await axios.get(url+'temp-cart')
+            const res = await axios.get(`${baseUrl}/temp-cart`)
             const data = res.data
             console.log(data)
             setTempCart(data.data)
@@ -55,24 +56,44 @@ export default function Cart() {
 
 // function to increase item quantity
 let [quantity,setQuantity]=useState(1)
-const updateQuantity = async(action,id,quantity)=>{
+const updateQuantity = async(action,item)=>{
+    let q = item.quantity
+
     switch(action){
         case 'add':
-            quantity++
-            console.log(quantity);
+            q++
+            console.log(q);
             break
         case 'remove':
-            quantity--
-            console.log(quantity);
+            q--
+            console.log(q);
             break
     }
    try{
-    if(quantity>0){
-        const res = await axios.put(url+'cart/'+id,{quantity:quantity})
-        const data = res.data
-        // console.log(data);
-        GetContext.setTrigger(Math.random())
-        console.log('quantity updated')
+    if(q>0){
+        if(sessionStorage.getItem('isLogedIn')==='true'){
+            const res = await axios.put(`${baseUrl}/cart/${item.plantId}?apikey=${apiKey}`,{
+                quantity:q
+            },{
+                headers:{
+                    "Authorization" : `Bearer ${sessionStorage.getItem('token')}`,
+                    "Content-Type" : "Application/json"
+                }
+            })
+            const data = res.data
+            console.log(data);
+            GetContext.setTrigger(Math.random())
+            console.log('quantity updated')
+        }
+        else{
+            const res = await axios.put(`${baseUrl}/temp-cart/${item.plantId}?apikey=${apiKey}`,{
+                quantity:q
+            })
+            const data = res.data
+            console.log(data);
+            GetContext.setTrigger(Math.random())
+            console.log('quantity updated')
+        }
     }
    
 }
@@ -104,9 +125,9 @@ catch(err){
                                     rating={item?.rating}
                                     quantity={item?.quantity}
                                     potColor={item?.potColor[0]}
-                                    qntyincreFunc={()=>updateQuantity('add',item._id,item.quantity)}
-                                    qntydecreFunc={()=>updateQuantity('remove',item._id,item.quantity)}
-                                    btnFunc={()=>removeItemFromCartServer(item._id)}
+                                    qntyincreFunc={()=>updateQuantity('add',item)}
+                                    qntydecreFunc={()=>updateQuantity('remove',item)}
+                                    btnFunc={()=>removeItemFromCartServer(item)}
                                     cartTotal={cartTotal}
                                     />
                     </div>
@@ -114,7 +135,8 @@ catch(err){
             </div>
             <div className="cart-total">
                         <h3>total:₹ {cartTotal}</h3>
-                        <button className="checkout btn-sty-1" onClick={()=>nav(`/checkout/${sessionStorage.getItem('userId')}`)}>Check Out</button>
+                        <button className="checkout btn-sty-1"
+                         onClick={()=>nav(`/checkout/${sessionStorage.getItem('userId')}`)}>Check Out</button>
             </div>
         </div>
     </div>

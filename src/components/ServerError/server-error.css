@@ -1,0 +1,6 @@
+.server-error-page{
+    width: 100vw;
+    height: 100vh;
+    background-image: url('https://ginbits.com/wp-content/uploads/2021/08/How-to-Fix-500-Internal-Server-Error.png');
+    background-size: cover;
+}

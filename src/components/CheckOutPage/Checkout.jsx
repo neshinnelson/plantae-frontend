@@ -19,7 +19,6 @@ export default function Checkout() {
     const[checkoutProducts,setCheckoutProducts]=useState([])
     const[subTotal,setSubtotal]=useState(0)
     const [waiting, setwaiting] = useState()
-    // const [refreshKey, setRefreshKey] = useState(window.location.reload)
 const allPlants = GetContext.allPlants 
     // console.log(GetContext.allPlants);
     //load checkout Products
@@ -27,12 +26,13 @@ const allPlants = GetContext.allPlants
         const main = async()=>{
             //fetching address of cliet if available
             const address = await autoFillAddress(userId,apiKey)
+            if(address===401)return nav('/quick-login')
             if(address) setAddressIsLoaded(true)
-            // console.log(address);
-            setHasUserAddress(address.address)
+            console.log(address);
+            setHasUserAddress(address)
             //fetching products for checkout
             const products = await fetchPlantsForCheckout(userId)
-            // console.log('plants:', products);
+            console.log('plants:', products);
             setCheckoutProducts(products)
             // calculating total amount
             const total = await findTotalFunc(products)
@@ -66,8 +66,8 @@ const allPlants = GetContext.allPlants
     }
 
     // handle remove checkout item
-    const handleRemoveCheckout = async(id)=>{
-       const data =  await removeFromCheckOut(userId,id)
+    const handleRemoveCheckout = async(plantId)=>{
+       const data =  await removeFromCheckOut(userId,plantId)
        console.log(data);
     }
 
@@ -76,9 +76,9 @@ const addToPayment = async()=>{
     nav(`/payment/${userId}-*-${subTotal}`)
     
 }
-    console.log(userAddress);
-    console.log(checkoutProductsId);
-    console.log(checkoutProducts);    
+    // console.log(userAddress);
+    // console.log(checkoutProductsId);
+    // console.log(checkoutProducts);    
   return (
     <div className='checkout-page'>
         <div className="checkout-container">
@@ -92,7 +92,7 @@ const addToPayment = async()=>{
                     <input type="text" placeholder='email'name='email' defaultValue={hasUserAddress.email||''} required/>
                     {/* checkbox div */}
                     <div className="check-box">
-                        <input type="checkbox" name="email" checked/>
+                        <input type="checkbox" name="email" defaultChecked/>
                         <label htmlFor="email" >
                             Email me with news and offers
                         </label>
@@ -100,7 +100,7 @@ const addToPayment = async()=>{
                     <input type="text" placeholder='phone' name='phone' defaultValue={hasUserAddress.phone||''} required/>
                     {/* checkbox div */}
                     <div className="check-box">
-                        <input type="checkbox" name="phone-no" checked/>
+                        <input type="checkbox" name="phone-no" defaultChecked/>
                         <label htmlFor="phone-no">
                             Receive updates on whatsapp
                         </label>
@@ -138,7 +138,7 @@ const addToPayment = async()=>{
 
                         {/* checkbox div */}
                        <div className="check-box">
-                            <input type="checkbox" name="save-info" checked/>
+                            <input type="checkbox" name="save-info" defaultChecked/>
                             <label htmlFor="save-info">
                                     save this information for next time
                                 </label>
@@ -165,7 +165,7 @@ const addToPayment = async()=>{
                                 <p>quantity:1</p>
                             </div>
                             <h4>₹ {item.price}</h4>
-                            <button className='btn-sty-1' onClick={()=>handleRemoveCheckout(item._id)}>remove</button>
+                            <button className='btn-sty-1' onClick={()=>handleRemoveCheckout(item.plantId)}>remove</button>
                         </div>
                     ))):<h6>Loading product...{waiting}</h6>
                 }
