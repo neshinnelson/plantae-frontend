@@ -20,6 +20,7 @@ import Payment from './components/PaymentPage/Payment';
 import { apiKey, baseUrl } from './static';
 import MiniLogin from './components/MiniLogin/MiniLogin';
 import ServerError from './components/ServerError/ServerError';
+import NoInternet from './components/NoInternet/NoInternet'
 
 export const Mycontext = createContext()
 
@@ -64,6 +65,7 @@ function App() {
     fetchingCartFromDb()
   },[trigger])
 
+  let [DisplayHOMEorERROR,setDisplayHOMEorERROR] = useState(<Home/>)
   useEffect(()=>{
     const fetchAllPlants = async ()=>{
       try{
@@ -75,7 +77,11 @@ function App() {
       }
       catch(err){
         console.error('unable to fetch all plants now',err);
-        alert('error fetching all plants')
+        // alert('error fetching all plants')
+        if(err.request.status===0){
+          return setDisplayHOMEorERROR(<NoInternet/>)
+        }
+        setDisplayHOMEorERROR(<ServerError/>)
       }
     }
     fetchAllPlants()
@@ -94,7 +100,7 @@ function App() {
           <NavBars/>
           <CategoryBar/>
           <Routes>
-            <Route path='/' element={<Home/>}/>
+            <Route path='/' element={DisplayHOMEorERROR}/>
             <Route path='/category/:name' element={<CategoryPage/>}/>
             <Route path='/plant-window/:name' element={<SinglePlantPage/>}/>
             <Route path='/cart' element={<Cart/>}/>

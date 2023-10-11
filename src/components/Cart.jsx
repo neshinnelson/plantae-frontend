@@ -15,9 +15,14 @@ export default function Cart() {
     const removeItemFromCartServer = async(item)=>{
         if(sessionStorage.getItem('isLogedIn')==="true"){
             try{
-                const res = await axios.delete(`${baseUrl}/cart/${item.plantId}?apikey=${apiKey}`)
+                const res = await axios.delete(`${baseUrl}/cart/${item.plantId}?apikey=${apiKey}`,{
+                    headers:{
+                        "Authorization" : `Bearer ${sessionStorage.getItem('token')}`,
+                        "Content-Type" : "Application/json"
+                    }
+                })
                 const data = res.data
-             //    console.log(data);
+                console.log(data);
                 console.log('item deleted from cart');
                 GetContext.setTrigger(Math.random())
               }
@@ -44,12 +49,20 @@ export default function Cart() {
     // fetching & saving temperary cart to state tempCart
     useEffect(()=>{
         const fetchTempCart = async()=>{
+           try{
             const res = await axios.get(`${baseUrl}/temp-cart`)
             const data = res.data
             console.log(data)
             setTempCart(data.data)
             const totalPrice = data.data.reduce((acc,item)=>acc + item.price ,0)
             setTempCartTotal(totalPrice)
+           }catch(err){
+            console.log('error in fetching temp cart :');
+            console.error(err);
+            if(err.request.status===500||err.request.status===0){
+                return nav('/server-error')
+            }
+           }
         }
         fetchTempCart()
     },[GetContext.trigger])

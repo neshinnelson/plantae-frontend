@@ -1,0 +1,6 @@
+.no-internet-page{
+    width: 100vw;
+    height: 100vh;
+    background-image: url('https://www.speedefy.com/wp-content/uploads/2022/01/no-internet.jpg');
+    background-size: cover;
+}

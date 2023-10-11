@@ -9,7 +9,7 @@ console.log('function is running');
 
 //adding items to cart along user id
 export const addToCart = async(item)=>{
-    // console.log(item);
+if(item===undefined)return 500
     const post = {
             userId:sessionStorage.getItem('userId'),
             category:item.category,
@@ -33,6 +33,7 @@ export const addToCart = async(item)=>{
         })
         const data = res.data
         console.log(data)
+        return data
         // GetContext.setTrigger(Math.random())
         //this trigger should be givven in the handle function 
         // nav('/cart')
@@ -60,6 +61,7 @@ export const addToCart = async(item)=>{
         const data = res.data
         console.log(data)
         console.log('item posted to temperary cart');
+        return data
         // nav('/cart')
       }
       catch(err){
@@ -72,8 +74,9 @@ export const addToCart = async(item)=>{
 
 // adding product id to checkout route in db
 export const BuyNowFunc = async(item)=>{
+    
     try{
-        const res = await axios.post(`${baseUrl}/checkout?apikey${apiKey}`,{
+        const res = await axios.post(`${baseUrl}/checkout?apikey=${apiKey}`,{
             userId: sessionStorage.getItem('userId'),
             productId:[item.plantId]
         },{
@@ -84,16 +87,12 @@ export const BuyNowFunc = async(item)=>{
         })
         const data = res.data
         console.log(data);
-        window.location.pathname = '/checkout/'+sessionStorage.getItem('userId')
+        return data
     }catch(err){
         console.log('server not available to fetch checkout');
         console.error(err);
         console.log(err.request,':err');
-        // if(err.request.status===406){
-        //     window.location.pathname = '/quick-login'
-        //     console.log(true, 'err 406' );
-        // }
-        window.location.pathname = '/quick-login'
+        return err.request.status
     }
 }
 
@@ -129,6 +128,7 @@ export const fetchPlantsForCheckout = async(userId)=>{
 
 
     const idArray = await fetchCheckoutProductIds(userId)
+    if(!idArray)return 0
     console.log(idArray);
     if(idArray.length > 0){
         try{
@@ -151,7 +151,7 @@ export const fetchPlantsForCheckout = async(userId)=>{
            }catch(err){
             console.log('server error! in fetching checkout products ');
             console.error(err);
-            // window.location.pathname = '/quick-login'
+            return err.request.status
            }
     }
 
@@ -216,13 +216,41 @@ export const updateAddress = async(address)=>{
 export const removeFromCheckOut = async(userId,plantId)=>{
             try{
                 const res = await axios
-                .delete(`${baseUrl}/checkout/${sessionStorage.getItem('userId')}?apikey=${apiKey}&itemId=${plantId}`)
+                .delete(`${baseUrl}/checkout/${sessionStorage.getItem('userId')}?apikey=${apiKey}&itemId=${plantId}`,{
+                    headers:{
+                        "Authorization" : `Bearer ${sessionStorage.getItem('token')}`,
+                        "Content-Type" : "Application/json"
+                    }
+                })
                 const data = res.data
                 console.log(data);
             }catch(err){
                 console.log('error deleting! wrong id!');
                 console.error(err);
-                // window.location.pathname = '/quick-login'
+                return err.request.status
             }
 }
 
+export const searchPlants = async(item)=>{
+    console.log(item);
+    try{
+        const name = await axios
+        .get(`${baseUrl}/plants?apikey=${apiKey}&name=${item}`)
+        console.log(name);
+        const resultName = name.data.data[0].name
+        console.log(resultName);
+        if(name.data.data)return `/plant-window/${resultName}`
+
+        const category = await axios
+        .get(`${baseUrl}/plants?apikey=${apiKey}&category=${item}`)
+        console.log(category);
+        const resultCategory = category.data.data[0].category
+        console.log(resultCategory);
+        if(resultCategory) return `/category/${resultCategory}`
+
+    }catch(err){
+        console.log('error in search');
+        console.error(err);
+        return err.request.status
+    }
+}

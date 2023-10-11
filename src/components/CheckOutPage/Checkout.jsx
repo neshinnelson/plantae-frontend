@@ -33,6 +33,7 @@ const allPlants = GetContext.allPlants
             //fetching products for checkout
             const products = await fetchPlantsForCheckout(userId)
             console.log('plants:', products);
+            if(products===500||products===0) return nav('/server-error')
             setCheckoutProducts(products)
             // calculating total amount
             const total = await findTotalFunc(products)
@@ -68,6 +69,8 @@ const allPlants = GetContext.allPlants
     // handle remove checkout item
     const handleRemoveCheckout = async(plantId)=>{
        const data =  await removeFromCheckOut(userId,plantId)
+       if(data===500) return nav('/server-error')
+       if(data===401) return nav('/quick-login')
        console.log(data);
     }
 
@@ -76,9 +79,7 @@ const addToPayment = async()=>{
     nav(`/payment/${userId}-*-${subTotal}`)
     
 }
-    // console.log(userAddress);
-    // console.log(checkoutProductsId);
-    // console.log(checkoutProducts);    
+   
   return (
     <div className='checkout-page'>
         <div className="checkout-container">
@@ -144,7 +145,7 @@ const addToPayment = async()=>{
                                 </label>
                        </div>
                         <div className="return-and-payment-btn">
-                            <label>return to cart</label>
+                            <label onClick={()=>nav('/cart')}>return to cart</label>
                             <button className='btn-sty-1' onClick={addToPayment}>Continue to Payment</button>
                         </div>
                         

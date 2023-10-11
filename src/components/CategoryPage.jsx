@@ -93,18 +93,23 @@ export default function CategoryPage() {
     </div>
   )
 }
+// {img,name,rating,price,btnFunc,redirectFunc}
 
-export  const DisplayItemContainerComp = ({img,name,rating,price,btnFunc,redirectFunc})=>{
+export  const DisplayItemContainerComp = (props)=>{
+  // console.log(props.img,'image ;;');
+  // if(props.img===undefined){
+  //   props.img = 'https://img.freepik.com/premium-vector/spring-flower-botanical-floral-icon-design-garden-plant-white-background-colorful-flat-vector-illustration-good-decoration-wedding-invitation-scrapbook_93083-2098.jpg'
+  // }
           return(
             <div className="item-container">
-            <div className='img' onClick={redirectFunc}>
-              <img src={img} alt="" />
-              <h4>{name}</h4>
+            <div className='img' onClick={props.redirectFunc}>
+              <img src={props.img} alt=""/>
+              <h4>{props.name}</h4>
             </div>
             <ul>
-              <li>{rating} ⭐</li>
-              <li>₹{price}</li>
-              <button className='btn-sty-1' onClick={btnFunc}>cart</button>
+              <li>{props.rating} ⭐</li>
+              <li>₹{props.price}</li>
+              <button className='btn-sty-1' onClick={props.btnFunc}>cart</button>
               <button className='btn-sty-2'onClick={()=>alert('not yet assigned')}>view item</button>
             </ul>
           </div>

@@ -38,14 +38,27 @@ export default function Home() {
                GetContext?.allPlants[ind3],GetContext?.allPlants[ind4],
                GetContext?.allPlants[ind5],GetContext?.allPlants[ind6],
               GetContext?.allPlants[ind7],GetContext?.allPlants[ind8]]
-  // console.log(allPlants);
-  // console.log(arr);
-  // console.log('home');
-  // console.log(randomNum.ind1);
-  // console.log(randomNum.ind5);
+
+  // adding to cart
+  const handleAddtoCart = async(item)=>{
+    const res = await addToCart(item)
+    // console.log(res);
+    if(res === 401) {
+      return nav('/quick-login')
+    }if(res === 500||res === 0){
+      return nav('/server-error')
+    }
+    if(res.response==='success') {
+      nav('/cart')
+      GetContext.setTrigger(Math.random())
+    }
+  }            
 
   // redirecting to /single-plant-window
   const handleClickToPalntWindow = async(plantName)=>{
+    if(plantName==='/server-error'){
+      return nav(plantName)
+    }
     nav(`/plant-window/${plantName}`)
   }
   return (
@@ -61,13 +74,13 @@ export default function Home() {
         {arr?.map((item)=>(
           <div key={item?.platId}>
            <DisplayItemContainerComp
-           img={item?.imgLinks[0]}
-           name={item?.name}
-           rating={item?.rating}
-           price={item?.price}
-           category={item?.category}
+           img={item?.imgLinks[0] || 'https://img.freepik.com/premium-vector/spring-flower-botanical-floral-icon-design-garden-plant-white-background-colorful-flat-vector-illustration-good-decoration-wedding-invitation-scrapbook_93083-2098.jpg'}
+           name={item?.name ||'Loading...'}
+           rating={item?.rating || 'Loading...'}
+           price={item?.price || 'Loading...'}
+           category={item?.category ||'Loading...'}
            btnFunc={
-            ()=>addToCart(item)}
+            ()=>handleAddtoCart(item)}
            redirectFunc ={()=>handleClickToPalntWindow(item.name)}
            />
            </div>

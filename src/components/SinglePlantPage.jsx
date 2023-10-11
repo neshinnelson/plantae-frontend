@@ -34,6 +34,20 @@ export default function SinglePlantPage() {
       fetchPlant()
     },[])
 
+    //handle buynow
+    const handleBuyNow = async(plant)=>{
+        const res = await BuyNowFunc(plant)
+        if(res === 401) {
+            return nav('/quick-login')
+          }if(res === 500||res === 0){
+            return nav('/server-error')
+          }
+          if(res.response==='success') {
+            nav('/checkout/'+sessionStorage.getItem('userId'))
+            GetContext.setTrigger(Math.random())
+          }
+    }
+
     // changing the main plant image on click
     const handleMainImg = (img)=>{
        setMainImg(img)
@@ -41,7 +55,6 @@ export default function SinglePlantPage() {
 
       // redirecting to /single-plant-window
   const handleClickToPalntWindow = async(plantName)=>{
-    // nav(`/plant-window/${plantName}`)
     window.location.pathname = `/plant-window/${plantName}`
   }
 
@@ -77,7 +90,7 @@ export default function SinglePlantPage() {
                 ))}                
                 <h4 className="plant-stock">stock: {plantDetails[0]?.stock}</h4>
                 <h5 className='delivery-time'>delivery time: {plantDetails[0]?.shippingTime} days</h5>
-                <button className="btn-sty-1 btn-width" onClick={()=>BuyNowFunc(plantDetails[0])}>Buy Now</button>
+                <button className="btn-sty-1 btn-width" onClick={()=>handleBuyNow(plantDetails[0])}>Buy Now</button>
                 <button className="btn-sty-2 btn-width"
                    onClick={()=>addToCart(plantDetails[0])}>Add to cart</button>
             </div>

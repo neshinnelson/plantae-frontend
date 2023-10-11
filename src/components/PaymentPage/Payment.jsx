@@ -8,13 +8,23 @@ export default function Payment() {
   const [productTotal,setProductTotal] = useState(0)
   const[tax,setTax]=useState(0)
   const [subTotal,setSubTotal]=useState(0)
+  const [userPaid,setUserPaid]=useState(0)
 
   useEffect(()=>{
     setUserId(prev=> prev = id.split|('-*-')[0])
     setProductTotal(prev=> prev = parseInt(id.split('-*-')[1]))
     setTax(prev=> prev = 10)
-    setSubTotal(prev=> prev = productTotal + tax)
+    setSubTotal(prev=> prev = productTotal +tax)
   },[])
+
+  //handle payment
+  const handlePayment = async()=>{
+    if(productTotal + tax == userPaid){
+      alert('payment success')
+    }else{
+      alert('enter the correct amount')
+    }
+  }
   return (
     <div className='payment-page'>
         <h2>Payment</h2>
@@ -37,13 +47,14 @@ export default function Payment() {
             <label htmlFor="">Net Banking</label>
           </div>
           <div className="amount-display">
-            <h6>price : {productTotal}</h6>
-            <h6>tax : {tax}</h6>
-            <h6>Total price : {subTotal}</h6>
+            <h6>price : ₹ {productTotal}</h6>
+            <h6>tax : ₹ {tax}</h6>
+            <h6>Total price : ₹ {productTotal + tax}</h6>
           </div>
           <div className="enter-amount">
-            <input type="text" placeholder='enter amount'/>
-            <button className="btn-sty-1">Pay Now</button>
+            <input type="number" placeholder='enter amount'
+            onChange={(e)=>setUserPaid(e.target.value)}/>
+            <button className="btn-sty-1" onClick={handlePayment}>Pay Now</button>
           </div>
         </div>
     </div>
